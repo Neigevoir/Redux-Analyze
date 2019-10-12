@@ -1,5 +1,4 @@
 import { Router, Route } from 'react-router-dom'
-// import { syncHistoryWithStore } from 'react-router-redux'
 import { Provider, connect } from '../../react-redux'
 import { useEffect, useContext, useReducer } from 'react'
 import Store from 'src/app/store/store.js'
@@ -7,7 +6,6 @@ import Layout from './router.jsx'
 import { persistor } from 'src/app/store/store.js'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import Actions from 'src/app/actions/actions'
-// import WithErrorHandle from 'src/app/components/HOC/with_errorhandle/witherrorhandle'
 import { createBrowserHistory } from 'history'
 const history = createBrowserHistory()
 
