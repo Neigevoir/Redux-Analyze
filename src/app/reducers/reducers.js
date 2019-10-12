@@ -1,5 +1,5 @@
-import common from "./common_reducer";
+import common from './common_reducer'
 
 export default {
   common
-};
+}

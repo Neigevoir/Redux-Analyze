@@ -1,9 +1,9 @@
 const TestRedux = () => {
   return {
-    type: "TEST_REDUX"
-  };
-};
+    type: 'TEST_REDUX'
+  }
+}
 
 export default {
   TestRedux
-};
+}

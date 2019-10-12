@@ -1,0 +1,28 @@
+{
+  "presets": ["react-app"],
+  "plugins": [
+    "transform-object-entries",
+    "transform-do-expressions",
+    "syntax-dynamic-import",
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        [
+          "module-resolver",
+          {
+            "alias": {
+              "src": "./src"
+            }
+          }
+        ]
+      ]
+    }
+  }
+}
