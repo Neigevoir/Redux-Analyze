@@ -18,5 +18,6 @@ export default function compose(...funcs) {
     return funcs[0]
   }
 
+  // Tips：函数Curry化，并且按参数从后往前执行，并将执行完的函数作为下一个的参数
   return funcs.reduce((a, b) => (...args) => a(b(...args)))
 }

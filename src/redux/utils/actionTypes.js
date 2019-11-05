@@ -1,10 +1,8 @@
+// Tips：生成随机字符串
 /**
- * These are private action types reserved by Redux.
- * For any unknown actions, you must return the current state.
- * If the current state is undefined, you must return the initial state.
- * Do not reference these action types directly in your code.
+ * @param {any} obj The object to inspect.
+ * @returns {boolean} True if the argument appears to be a plain object.
  */
-
 const randomString = () =>
   Math.random()
     .toString(36)
@@ -12,6 +10,11 @@ const randomString = () =>
     .split('')
     .join('.')
 
+/*Tips：Redux的基本Types
+  INIT: 整个Redux初始化时使用
+  REPLACE：用户使用另一个Reducer去替换当前Reducer时使用
+  PROBE_UNKNOWN_ACTION：用户没有在Reducer里面定义对应的Types,使用了无法识别的types时会使用
+*/
 const ActionTypes = {
   INIT: `@@redux/INIT${randomString()}`,
   REPLACE: `@@redux/REPLACE${randomString()}`,
