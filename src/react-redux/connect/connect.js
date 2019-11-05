@@ -5,6 +5,23 @@ import defaultMapStateToPropsFactories from './mapStateToProps'
 import defaultMergePropsFactories from './mergeProps'
 import defaultSelectorFactory from './selectorFactory'
 
+/*
+  connect is a facade over connectAdvanced. It turns its args into a compatible
+  selectorFactory, which has the signature:
+
+    (dispatch, options) => (nextState, nextOwnProps) => nextFinalProps
+  
+  connect passes its args to connectAdvanced as options, which will in turn pass them to
+  selectorFactory each time a Connect component instance is instantiated or hot reloaded.
+
+  selectorFactory returns a final props selector from its mapStateToProps,
+  mapStateToPropsFactories, mapDispatchToProps, mapDispatchToPropsFactories, mergeProps,
+  mergePropsFactories, and pure args.
+
+  The resulting final props selector is called by the Connect component instance whenever
+  it receives new props or store state.
+ */
+
 function match(arg, factories, name) {
   for (let i = factories.length - 1; i >= 0; i--) {
     const result = factories[i](arg)
@@ -78,6 +95,7 @@ export function createConnect({
       areStatePropsEqual,
       areMergedPropsEqual,
 
+      // any extra options args can override defaults of connect or connectAdvanced
       ...extraOptions
     })
   }
