@@ -2,6 +2,7 @@ import ActionTypes from './utils/actionTypes'
 import warning from './utils/warning'
 import isPlainObject from './utils/isPlainObject'
 
+// TIPS：错误的State信息
 function getUndefinedStateErrorMessage(key, action) {
   const actionType = action && action.type
   const actionDescription =
@@ -14,6 +15,7 @@ function getUndefinedStateErrorMessage(key, action) {
   )
 }
 
+// TIPS：获取不期待的state格式的信息
 function getUnexpectedStateShapeWarningMessage(
   inputState,
   reducers,
@@ -62,6 +64,7 @@ function getUnexpectedStateShapeWarningMessage(
   }
 }
 
+// TIPS：断言reducer的格式
 function assertReducerShape(reducers) {
   Object.keys(reducers).forEach(key => {
     const reducer = reducers[key]
@@ -110,6 +113,10 @@ function assertReducerShape(reducers) {
  * @returns {Function} A reducer function that invokes every reducer inside the
  * passed object, and builds a state object with the same shape.
  */
+/* 
+  TIPS：结合Reducer，将Reducer整合成一个Reducer，原先的Reducer等于现在的子集
+*/
+
 export default function combineReducers(reducers) {
   const reducerKeys = Object.keys(reducers)
   const finalReducers = {}
@@ -122,6 +129,7 @@ export default function combineReducers(reducers) {
       }
     }
 
+    // TIPS：如果是正常的Reducer直接塞入finalReducers
     if (typeof reducers[key] === 'function') {
       finalReducers[key] = reducers[key]
     }
