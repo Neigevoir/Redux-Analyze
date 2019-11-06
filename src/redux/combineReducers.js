@@ -169,18 +169,21 @@ export default function combineReducers(reducers) {
 
     let hasChanged = false
     const nextState = {}
+    // TIPS：拿到整个Reducers，然后拿到对应的Key
     for (let i = 0; i < finalReducerKeys.length; i++) {
       const key = finalReducerKeys[i]
       const reducer = finalReducers[key]
-      const previousStateForKey = state[key]
-      const nextStateForKey = reducer(previousStateForKey, action)
+      const previousStateForKey = state[key] //TIPS：获取当前Reduce对应的State
+      const nextStateForKey = reducer(previousStateForKey, action) //TIPS：获取传入action，Reduce对应的State
       if (typeof nextStateForKey === 'undefined') {
         const errorMessage = getUndefinedStateErrorMessage(key, action)
         throw new Error(errorMessage)
       }
+      // TIPS：将更新后的State当道nextState对应的key中
       nextState[key] = nextStateForKey
       hasChanged = hasChanged || nextStateForKey !== previousStateForKey
     }
+    // TIPS：如果前后的State不等就return nextState，否则return state
     return hasChanged ? nextState : state
   }
 }
