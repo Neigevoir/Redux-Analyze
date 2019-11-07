@@ -11,6 +11,7 @@ import { setBatch } from './utils/batch'
 import { unstable_batchedUpdates as batch } from './utils/reactBatchedUpdates'
 import shallowEqual from './utils/shallowEqual'
 
+// TIPS：设置batch为react的
 setBatch(batch)
 
 export {

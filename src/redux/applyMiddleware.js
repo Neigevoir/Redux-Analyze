@@ -17,7 +17,10 @@ import compose from './compose'
  * @returns {Function} A store enhancer applying the middleware.
  */
 
-// Tips：注册中间件，如router、api等，在执行api或router处理时，可以设置
+/* 
+  Tips：注册中间件，如router、api等，在执行api或router处理时，可以做一些处理
+  例如正常你dispatch一个action，但是所有api都需要一个SUCCESS，和ERROR这情况下，如果在要写多个action就不方便
+*/
 export default function applyMiddleware(...middlewares) {
   return createStore => (...args) => {
     const store = createStore(...args)
