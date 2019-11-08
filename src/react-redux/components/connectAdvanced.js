@@ -17,6 +17,7 @@ import { ReactReduxContext } from './Context'
 const EMPTY_ARRAY = []
 const NO_SUBSCRIPTION_ARRAY = [null, null]
 
+// TIPS：将组件转化成为字符串
 const stringifyComponent = Comp => {
   try {
     return JSON.stringify(Comp)
@@ -37,6 +38,7 @@ const initStateUpdates = () => [null, 0]
 // useLayoutEffect in the browser. We need useLayoutEffect because we want
 // `connect` to perform sync updates to a ref to save the latest props after
 // a render is actually committed to the DOM.
+// TIPS：判断使用Effect还是LayoutEffect
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' &&
   typeof window.document !== 'undefined' &&

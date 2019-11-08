@@ -4,6 +4,7 @@ import { getBatch } from './batch'
 // well as nesting subscriptions of descendant components, so that we can ensure the
 // ancestor components re-render before descendants
 
+// TIPS：初始化listeners
 const CLEARED = null
 const nullListeners = { notify() {} }
 
@@ -19,7 +20,7 @@ function createListenerCollection() {
       next = CLEARED
       current = CLEARED
     },
-
+    // TIPS：通知执行订阅的方法
     notify() {
       const listeners = (current = next)
       batch(() => {
@@ -32,7 +33,7 @@ function createListenerCollection() {
     get() {
       return next
     },
-
+    // TIPS：注册监听
     subscribe(listener) {
       let isSubscribed = true
       if (next === current) next = current.slice()
@@ -49,6 +50,7 @@ function createListenerCollection() {
   }
 }
 
+// TIPS：new Subscription(store)，parentSub为undefined
 export default class Subscription {
   constructor(store, parentSub) {
     this.store = store
@@ -64,10 +66,12 @@ export default class Subscription {
     return this.listeners.subscribe(listener)
   }
 
+  // TIPS：通知执行所有已经订阅的方法
   notifyNestedSubs() {
     this.listeners.notify()
   }
 
+  // TIPS：store收到dispatch会执行nextListeners订阅组，这里provider会将该函数注册到nextListeners中
   handleChangeWrapper() {
     if (this.onStateChange) {
       this.onStateChange()
@@ -78,16 +82,18 @@ export default class Subscription {
     return Boolean(this.unsubscribe)
   }
 
+  // TIPS：订阅
   trySubscribe() {
     if (!this.unsubscribe) {
       this.unsubscribe = this.parentSub
         ? this.parentSub.addNestedSub(this.handleChangeWrapper)
-        : this.store.subscribe(this.handleChangeWrapper)
+        : this.store.subscribe(this.handleChangeWrapper) //TIPS：给store的nextListeners增加一个订阅的方法
 
       this.listeners = createListenerCollection()
     }
   }
 
+  // TIPS：取消订阅
   tryUnsubscribe() {
     if (this.unsubscribe) {
       this.unsubscribe()

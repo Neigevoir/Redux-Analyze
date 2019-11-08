@@ -1,5 +1,6 @@
 import verifyPlainObject from '../utils/verifyPlainObject'
 
+// TIPS：当没有传stateToProps的时候执行，返回一个function，function返回一个undefined
 export function wrapMapToPropsConstant(getConstant) {
   return function initConstantSelector(dispatch, options) {
     const constant = getConstant(dispatch, options)
@@ -19,6 +20,7 @@ export function wrapMapToPropsConstant(getConstant) {
 // A length of one signals that mapToProps does not depend on props from the parent component.
 // A length of zero is assumed to mean mapToProps is getting args via arguments or ...args and
 // therefore not reporting its length accurately..
+// TIPS：判断是否要拿拥有的props中依赖的props
 export function getDependsOnOwnProps(mapToProps) {
   return mapToProps.dependsOnOwnProps !== null &&
     mapToProps.dependsOnOwnProps !== undefined
@@ -38,6 +40,16 @@ export function getDependsOnOwnProps(mapToProps) {
 //  * On first call, verifies the first result is a plain object, in order to warn
 //    the developer that their mapToProps function is not returning a valid result.
 //
+
+/* 
+  TIPS：假设参数mapToProps传入的是
+  function getState(state){
+    return {
+      test: state.test
+    }
+  }
+*/
+
 export function wrapMapToPropsFunc(mapToProps, methodName) {
   return function initProxySelector(dispatch, { displayName }) {
     const proxy = function mapToPropsProxy(stateOrDispatch, ownProps) {
@@ -49,20 +61,31 @@ export function wrapMapToPropsFunc(mapToProps, methodName) {
     // allow detectFactoryAndVerify to get ownProps
     proxy.dependsOnOwnProps = true
 
+    // Tips：该函数在首次会执行
     proxy.mapToProps = function detectFactoryAndVerify(
       stateOrDispatch,
       ownProps
     ) {
+      /* TIPS：将
+        function getState(state){
+          return {
+            test: state.test
+          }
+        }
+        赋给proxy.mapToProps，替换当前的函数
+      */
       proxy.mapToProps = mapToProps
       proxy.dependsOnOwnProps = getDependsOnOwnProps(mapToProps)
+      // TIPS：获取 Props { test: state.test }
       let props = proxy(stateOrDispatch, ownProps)
-
+      // TIPS：如果 Props是对象则继续执行该流程直到拿到Props Obejct
       if (typeof props === 'function') {
         proxy.mapToProps = props
         proxy.dependsOnOwnProps = getDependsOnOwnProps(props)
         props = proxy(stateOrDispatch, ownProps)
       }
 
+      // TIPS：验证是不是纯object
       if (process.env.NODE_ENV !== 'production')
         verifyPlainObject(props, displayName, methodName)
 

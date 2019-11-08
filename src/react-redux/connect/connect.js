@@ -22,6 +22,7 @@ import defaultSelectorFactory from './selectorFactory'
   it receives new props or store state.
  */
 
+//  TIPS：将参数全部放到工厂函数中执行，拿回返回值
 function match(arg, factories, name) {
   for (let i = factories.length - 1; i >= 0; i--) {
     const result = factories[i](arg)
@@ -63,11 +64,17 @@ export function createConnect({
       ...extraOptions
     } = {}
   ) {
+    /* TIPS：initMapStateToProps、initMapDispatchToProps、initMergeProps
+      三个方法基本相同，主要用于借助工厂函数合并props、封装actions等，具体的可以看mapStateToProps，这里不对每个都进行过一遍
+      然后return 一个function
+    */
+
     const initMapStateToProps = match(
       mapStateToProps,
       mapStateToPropsFactories,
       'mapStateToProps'
     )
+
     const initMapDispatchToProps = match(
       mapDispatchToProps,
       mapDispatchToPropsFactories,

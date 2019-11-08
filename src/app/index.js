@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Provider, connect } from '../react-redux'
 import Store from 'src/app/store/store.js'
 import Actions from 'src/app/actions/actions'
@@ -8,9 +7,7 @@ function getState(state) {
 }
 
 function First(props) {
-  console.log(2)
   function handleClick(e) {
-    console.log('aksd123')
     e.stopPropagation()
     e.preventDefault()
     props.dispatch(Actions.common.TestRedux())
@@ -24,9 +21,7 @@ function First(props) {
 }
 
 function SecondRender(props) {
-  console.log(3)
   function handleClick(e) {
-    console.log('aksd')
     e.stopPropagation()
     e.preventDefault()
     props.dispatch(Actions.common.TestRedux())
@@ -36,15 +31,12 @@ function SecondRender(props) {
 const Second = connect(getState)(SecondRender)
 
 function FirstChild() {
-  console.log(4)
   return <div>FirstChild</div>
 }
 
 const Test = connect()(TestRender)
 
 function TestRender(props) {
-  console.log(1)
-
   function consoleTest() {
     console.log('test')
   }

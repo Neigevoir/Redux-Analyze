@@ -1,5 +1,6 @@
 import verifySubselectors from './verifySubselectors'
 
+// TIPS：不开启pure处理的props工厂函数，将connect的三个参数合并起来成为一个props传递下去
 export function impureFinalPropsSelectorFactory(
   mapStateToProps,
   mapDispatchToProps,
@@ -15,6 +16,7 @@ export function impureFinalPropsSelectorFactory(
   }
 }
 
+// TIPS：pure处理的props工厂函数，将connect的三个参数合并起来成为一个props传递下去
 export function pureFinalPropsSelectorFactory(
   mapStateToProps,
   mapDispatchToProps,
@@ -97,6 +99,7 @@ export function pureFinalPropsSelectorFactory(
 // props have not changed. If false, the selector will always return a new
 // object and shouldComponentUpdate will always return true.
 
+// TIPS：
 export default function finalPropsSelectorFactory(
   dispatch,
   { initMapStateToProps, initMapDispatchToProps, initMergeProps, ...options }
@@ -114,6 +117,7 @@ export default function finalPropsSelectorFactory(
     )
   }
 
+  // TIPS：用户是否选择开启pure
   const selectorFactory = options.pure
     ? pureFinalPropsSelectorFactory
     : impureFinalPropsSelectorFactory

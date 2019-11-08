@@ -15,6 +15,7 @@ function verify(selector, methodName, displayName) {
   }
 }
 
+// TIPS：验证mapStateToProps、mapDispatchToProps、mergeProps的合法性
 export default function verifySubselectors(
   mapStateToProps,
   mapDispatchToProps,
