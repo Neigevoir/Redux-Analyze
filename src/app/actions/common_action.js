@@ -1,9 +1,5 @@
 const TestRedux = () => {
-  return {
-    type: 'TEST_REDUX'
-  }
+  return { type: 'TEST_REDUX' }
 }
 
-export default {
-  TestRedux
-}
+export default { TestRedux }

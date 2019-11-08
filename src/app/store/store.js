@@ -7,16 +7,7 @@ const Store = ((Redux, Reducers) => {
     middleware = Redux.applyMiddleware(thunkMiddleware),
     reducers = Redux.combineReducers({ ...Reducers })
 
-  return Redux.createStore(
-    reducers,
-    preloadedState,
-    Redux.compose(
-      middleware,
-      window.devToolsExtension && process.env.NODE_ENV === 'development'
-        ? window.devToolsExtension()
-        : f => f
-    )
-  )
+  return Redux.createStore(reducers, preloadedState, Redux.compose(middleware))
 })(Redux, Reducers)
 
 export default Store

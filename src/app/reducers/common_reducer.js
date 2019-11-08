@@ -2,7 +2,7 @@ const initialState = {
   test: 0
 }
 
-function reducer(state = initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case 'TEST_REDUX':
       return { ...state, test: state.test + 1 }
@@ -10,5 +10,3 @@ function reducer(state = initialState, action) {
       return state
   }
 }
-
-export default reducer

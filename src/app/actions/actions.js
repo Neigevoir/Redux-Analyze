@@ -1,5 +1,3 @@
 import common from './common_action'
 
-export default {
-  common
-}
+export default { common }

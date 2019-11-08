@@ -26,6 +26,8 @@ function SecondRender(props) {
     e.preventDefault()
     props.dispatch(Actions.common.TestRedux())
   }
+  console.log('SecondRender')
+
   return <div onClick={handleClick}>Second</div>
 }
 const Second = connect(getState)(SecondRender)
