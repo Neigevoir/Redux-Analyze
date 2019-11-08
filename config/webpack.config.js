@@ -390,7 +390,6 @@ module.exports = function(webpackEnv) {
                   'babel-preset-react-app/webpack-overrides'
                 ),
                 plugins: [
-                  [require.resolve('babel-plugin-date-fns')],
                   [
                     require.resolve('babel-plugin-named-asset-import'),
                     {
