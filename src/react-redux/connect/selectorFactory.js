@@ -16,7 +16,10 @@ export function impureFinalPropsSelectorFactory(
   }
 }
 
-// TIPS：pure处理的props工厂函数，将connect的三个参数合并起来成为一个props传递下去
+/* 
+  TIPS：pure处理的props工厂函数，相对于没有pure的会复杂点，我们按它本身流程来看
+*/
+
 export function pureFinalPropsSelectorFactory(
   mapStateToProps,
   mapDispatchToProps,
@@ -24,13 +27,15 @@ export function pureFinalPropsSelectorFactory(
   dispatch,
   { areStatesEqual, areOwnPropsEqual, areStatePropsEqual }
 ) {
-  let hasRunAtLeastOnce = false
+  // Tips：流程1-初始化各种参数
+  let hasRunAtLeastOnce = false //TIPS：是否有跑至少一次整个函数
   let state
   let ownProps
   let stateProps
   let dispatchProps
   let mergedProps
 
+  // Tips：流程3-处理第一次调用pureFinalPropsSelector时，各种参数，后续不再执行
   function handleFirstCall(firstState, firstOwnProps) {
     state = firstState
     ownProps = firstOwnProps
@@ -73,6 +78,7 @@ export function pureFinalPropsSelectorFactory(
     return mergedProps
   }
 
+  // Tips：流程4-对state和props的最新和当前进行相等判断，根据相对的进行return
   function handleSubsequentCalls(nextState, nextOwnProps) {
     const propsChanged = !areOwnPropsEqual(nextOwnProps, ownProps)
     const stateChanged = !areStatesEqual(nextState, state)
@@ -85,6 +91,10 @@ export function pureFinalPropsSelectorFactory(
     return mergedProps
   }
 
+  /* 
+    Tips：流程2-第一次的时候return handleFirstCall(nextState, nextOwnProps)
+                第二次的时候return handleSubsequentCalls(nextState, nextOwnProps)
+  */
   return function pureFinalPropsSelector(nextState, nextOwnProps) {
     return hasRunAtLeastOnce
       ? handleSubsequentCalls(nextState, nextOwnProps)
@@ -99,7 +109,6 @@ export function pureFinalPropsSelectorFactory(
 // props have not changed. If false, the selector will always return a new
 // object and shouldComponentUpdate will always return true.
 
-// TIPS：
 export default function finalPropsSelectorFactory(
   dispatch,
   { initMapStateToProps, initMapDispatchToProps, initMergeProps, ...options }
@@ -108,6 +117,7 @@ export default function finalPropsSelectorFactory(
   const mapDispatchToProps = initMapDispatchToProps(dispatch, options)
   const mergeProps = initMergeProps(dispatch, options)
 
+  // Tips：非生产环境判断
   if (process.env.NODE_ENV !== 'production') {
     verifySubselectors(
       mapStateToProps,
