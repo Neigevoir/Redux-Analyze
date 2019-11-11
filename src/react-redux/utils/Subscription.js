@@ -23,6 +23,7 @@ function createListenerCollection() {
     // TIPS：通知执行订阅的方法
     notify() {
       const listeners = (current = next)
+      console.log(listeners)
       batch(() => {
         for (let i = 0; i < listeners.length; i++) {
           listeners[i]()

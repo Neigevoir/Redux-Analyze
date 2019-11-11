@@ -1,5 +1,6 @@
 const initialState = {
-  test: 0
+  test: 0,
+  pure: true
 }
 
 export default function reducer(state = initialState, action) {

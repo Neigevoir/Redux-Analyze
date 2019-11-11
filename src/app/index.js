@@ -2,18 +2,18 @@ import { Provider, connect } from '../react-redux'
 import Store from 'src/app/store/store.js'
 import Actions from 'src/app/actions/actions'
 
-function getState(state) {
-  return { test: state.common }
+function getTestState(state) {
+  return { test: state.common.test }
+}
+
+function getPureState(state) {
+  return { pure: state.common.pure }
 }
 
 function First(props) {
-  function handleClick(e) {
-    e.stopPropagation()
-    e.preventDefault()
-    props.dispatch(Actions.common.TestRedux())
-  }
+  console.log('First')
   return (
-    <div onClick={handleClick}>
+    <div>
       First
       <FirstChild />
     </div>
@@ -27,22 +27,28 @@ function SecondRender(props) {
     props.dispatch(Actions.common.TestRedux())
   }
   console.log('SecondRender')
-
   return <div onClick={handleClick}>Second</div>
 }
-const Second = connect(getState)(SecondRender)
+const Second = connect(getPureState)(SecondRender)
 
-function FirstChild() {
-  return <div>FirstChild</div>
+function FirstChildRender(props) {
+  function handleClick(e) {
+    e.stopPropagation()
+    e.preventDefault()
+    props.dispatch(Actions.common.TestRedux())
+    console.log(1)
+  }
+  console.log('FirstChildRender')
+  return <div onClick={handleClick}>FirstChild</div>
 }
 
-const Test = connect()(TestRender)
+const FirstChild = connect(getTestState)(FirstChildRender)
 
-function TestRender(props) {
+function Test(props) {
   function consoleTest() {
     console.log('test')
   }
-
+  console.log('Test')
   return (
     <div>
       <div onClick={consoleTest}>test</div>
