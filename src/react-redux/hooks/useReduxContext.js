@@ -18,6 +18,8 @@ import { ReactReduxContext } from '../components/Context'
  *   return <div>{store.getState()}</div>
  * }
  */
+
+// TIPS：获取Context的Value，一般用来拿Store
 export function useReduxContext() {
   const contextValue = useContext(ReactReduxContext)
 

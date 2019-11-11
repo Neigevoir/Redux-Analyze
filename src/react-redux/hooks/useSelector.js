@@ -22,10 +22,11 @@ import { ReactReduxContext } from '../components/Context'
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
+// Tips：浅对比前后两个store的值
 const refEquality = (a, b) => a === b
 
 function useSelectorWithStoreAndSubscription(
-  selector,
+  selector, //Tips：state => state.test
   equalityFn,
   store,
   contextSub
@@ -37,6 +38,7 @@ function useSelectorWithStoreAndSubscription(
     contextSub
   ])
 
+  // TIPS：用来存储state和error信息
   const latestSubscriptionCallbackError = useRef()
   const latestSelector = useRef()
   const latestSelectedState = useRef()
@@ -44,6 +46,7 @@ function useSelectorWithStoreAndSubscription(
   let selectedState
 
   try {
+    // TIPS：如果Error并且，两个selector的值不相等，则重新计算
     if (
       selector !== latestSelector.current ||
       latestSubscriptionCallbackError.current
@@ -62,13 +65,16 @@ function useSelectorWithStoreAndSubscription(
     throw new Error(errorMessage)
   }
 
+  // TIPS：在执行effect时，将最新的selector存储
   useIsomorphicLayoutEffect(() => {
     latestSelector.current = selector
     latestSelectedState.current = selectedState
     latestSubscriptionCallbackError.current = undefined
   })
 
+  // TIPS：当Store或subscription有改变的话，直接执行checkForUpdates
   useIsomorphicLayoutEffect(() => {
+    // TIPS：对比前后selectState的值，全等则不做处理，有改变则将最新的值存储，并执行update的订阅
     function checkForUpdates() {
       try {
         const newSelectedState = latestSelector.current(store.getState())
@@ -86,9 +92,11 @@ function useSelectorWithStoreAndSubscription(
         latestSubscriptionCallbackError.current = err
       }
 
+      // TIPS：update，将最新的selectedState返回
       forceRender({})
     }
 
+    // TIPS：在原先Store的subscription上增加订阅了checkForUpdates
     subscription.onStateChange = checkForUpdates
     subscription.trySubscribe()
 
@@ -114,8 +122,10 @@ export function createSelectorHook(context = ReactReduxContext) {
   return function useSelector(selector, equalityFn = refEquality) {
     invariant(selector, `You must pass a selector to useSelectors`)
 
+    // TIPS：关键点，获取当前Store的subscription和context的信息
     const { store, subscription: contextSub } = useReduxContext()
 
+    // TIPS：等于在对当前Store进行了扩展和订阅
     return useSelectorWithStoreAndSubscription(
       selector,
       equalityFn,
