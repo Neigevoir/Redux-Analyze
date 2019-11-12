@@ -1,17 +1,13 @@
 import { getBatch } from './batch'
 
-// encapsulates the subscription logic for connecting a component to the redux store, as
-// well as nesting subscriptions of descendant components, so that we can ensure the
-// ancestor components re-render before descendants
-
 // TIPS：初始化listeners
 const CLEARED = null
 const nullListeners = { notify() {} }
 
 function createListenerCollection() {
+  // TIPS：拿到reactdom的state合并方法，防止订阅过多的setState，造成性能问题
   const batch = getBatch()
-  // the current/next pattern is copied from redux's createStore code.
-  // TODO: refactor+expose that code to be reusable here?
+
   let current = []
   let next = []
 
@@ -23,7 +19,6 @@ function createListenerCollection() {
     // TIPS：通知执行订阅的方法
     notify() {
       const listeners = (current = next)
-      console.log(listeners)
       batch(() => {
         for (let i = 0; i < listeners.length; i++) {
           listeners[i]()
@@ -37,6 +32,7 @@ function createListenerCollection() {
     // TIPS：注册监听
     subscribe(listener) {
       let isSubscribed = true
+      // TIPS：确保next获取的是正确的current而不是引用
       if (next === current) next = current.slice()
       next.push(listener)
 
@@ -62,6 +58,7 @@ export default class Subscription {
     this.handleChangeWrapper = this.handleChangeWrapper.bind(this)
   }
 
+  // TIPS：增加嵌套订阅
   addNestedSub(listener) {
     this.trySubscribe()
     return this.listeners.subscribe(listener)
@@ -79,11 +76,12 @@ export default class Subscription {
     }
   }
 
+  // TIPS：判断是否已经订阅
   isSubscribed() {
     return Boolean(this.unsubscribe)
   }
 
-  // TIPS：订阅
+  // TIPS：没有取消订阅，就判断parentSub，如果有则帮到parentSub的订阅组中，否则绑到当前store
   trySubscribe() {
     if (!this.unsubscribe) {
       this.unsubscribe = this.parentSub
