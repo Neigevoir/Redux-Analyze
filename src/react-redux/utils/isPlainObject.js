@@ -1,8 +1,4 @@
-/**
- * @param {any} obj The object to inspect.
- * @returns {boolean} True if the argument appears to be a plain object.
- */
-// Tips：判断是否是一个纯粹的对象
+// Tips：判断是否是一个纯粹的对象，redux的utils中已说明
 export default function isPlainObject(obj) {
   if (typeof obj !== 'object' || obj === null) return false
 
