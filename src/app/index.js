@@ -1,4 +1,5 @@
 import { Provider, connect } from '../react-redux'
+import { useSelector } from '../react-redux'
 import Store from 'src/app/store/store.js'
 import Actions from 'src/app/actions/actions'
 
@@ -32,6 +33,7 @@ function SecondRender(props) {
 const Second = connect(getPureState)(SecondRender)
 
 function FirstChildRender(props) {
+  const test = useSelector(state => state.common.test)
   function handleClick(e) {
     e.stopPropagation()
     e.preventDefault()
@@ -39,7 +41,8 @@ function FirstChildRender(props) {
     console.log(1)
   }
   console.log('FirstChildRender')
-  return <div onClick={handleClick}>FirstChild</div>
+  console.log(props)
+  return <div onClick={handleClick}>FirstChild{test}</div>
 }
 
 const FirstChild = connect(getTestState)(FirstChildRender)

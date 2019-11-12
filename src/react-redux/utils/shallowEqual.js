@@ -8,6 +8,7 @@ function is(x, y) {
   }
 }
 
+// TIPS：浅对比
 export default function shallowEqual(objA, objB) {
   if (is(objA, objB)) return true
 

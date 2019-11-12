@@ -11,14 +11,7 @@ import { useReduxContext as useDefaultReduxContext } from './useReduxContext'
 import Subscription from '../utils/Subscription'
 import { ReactReduxContext } from '../components/Context'
 
-// React currently throws a warning when using useLayoutEffect on the server.
-// To get around it, we can conditionally useEffect on the server (no-op) and
-// useLayoutEffect in the browser. We need useLayoutEffect to ensure the store
-// subscription callback always has the selector from the latest render commit
-// available, otherwise a store update may happen between render and the effect,
-// which may cause missed updates; we also must ensure the store subscription
-// is created synchronously, otherwise a store update may occur before the
-// subscription is created and an inconsistent state may be observed
+// TIPS：使用同构LayoutEffect
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -31,8 +24,10 @@ function useSelectorWithStoreAndSubscription(
   store,
   contextSub
 ) {
+  // TIPS：定义一个useReducer，用来进行update
   const [, forceRender] = useReducer(s => s + 1, 0)
 
+  // TIPS：生成一个Subscription的实例
   const subscription = useMemo(() => new Subscription(store, contextSub), [
     store,
     contextSub
@@ -46,7 +41,7 @@ function useSelectorWithStoreAndSubscription(
   let selectedState
 
   try {
-    // TIPS：如果Error并且，两个selector的值不相等，则重新计算
+    // TIPS：如果两个selector的不相等，则重新处理，否则按上一次
     if (
       selector !== latestSelector.current ||
       latestSubscriptionCallbackError.current
@@ -56,6 +51,7 @@ function useSelectorWithStoreAndSubscription(
       selectedState = latestSelectedState.current
     }
   } catch (err) {
+    // TIPS：抛出异常
     let errorMessage = `An error occured while selecting the store state: ${err.message}.`
 
     if (latestSubscriptionCallbackError.current) {
@@ -85,21 +81,21 @@ function useSelectorWithStoreAndSubscription(
 
         latestSelectedState.current = newSelectedState
       } catch (err) {
-        // we ignore all errors here, since when the component
-        // is re-rendered, the selectors are called again, and
-        // will throw again, if neither props nor store state
-        // changed
         latestSubscriptionCallbackError.current = err
       }
 
       // TIPS：update，将最新的selectedState返回
       forceRender({})
     }
-
     // TIPS：在原先Store的subscription上增加订阅了checkForUpdates
     subscription.onStateChange = checkForUpdates
     subscription.trySubscribe()
 
+    /* 
+      TIPS：个人疑惑，一开始因为依赖项是store和subscription，那样应该store一变就执行这个effect，
+      后面想清楚，store, subscription如果不是完全的改变是不会触发，因为指针并未改变
+      所以后面只是subscription去触发checkForUpdates，而不是effect
+    */
     checkForUpdates()
 
     return () => subscription.tryUnsubscribe()
@@ -108,12 +104,7 @@ function useSelectorWithStoreAndSubscription(
   return selectedState
 }
 
-/**
- * Hook factory, which creates a `useSelector` hook bound to a given context.
- *
- * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
- * @returns {Function} A `useSelector` hook bound to the specified context.
- */
+// Tips：与其他Hooks同理
 export function createSelectorHook(context = ReactReduxContext) {
   const useReduxContext =
     context === ReactReduxContext
