@@ -1,12 +1,7 @@
 import { ReactReduxContext } from '../components/Context'
 import { useStore as useDefaultStore, createStoreHook } from './useStore'
 
-/**
- * Hook factory, which creates a `useDispatch` hook bound to a given context.
- *
- * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
- * @returns {Function} A `useDispatch` hook bound to the specified context.
- */
+// TIPS：和useStore同样逻辑，如有传入context则使用传入，否则使用useStore里的store，并且返回store的dispatch
 export function createDispatchHook(context = ReactReduxContext) {
   const useStore =
     context === ReactReduxContext ? useDefaultStore : createStoreHook(context)

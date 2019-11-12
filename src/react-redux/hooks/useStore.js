@@ -3,11 +3,14 @@ import { ReactReduxContext } from '../components/Context'
 import { useReduxContext as useDefaultReduxContext } from './useReduxContext'
 
 /**
- * Hook factory, which creates a `useStore` hook bound to a given context.
+ * TIPS：如果有传入context，并且和ReacReduxContext不一致则使用传入，否则使用ReactReduxContext，即Redux的provider数据
  *
- * @param {Function} [context=ReactReduxContext] Context passed to your `<Provider>`.
- * @returns {Function} A `useStore` hook bound to the specified context.
+ * @param {Function} [context=ReactReduxContext]
+ * 传入一个context，默认为ReactReduxContext
+ * @returns {Function}
+ * return一个function用来获取provider的store
  */
+
 export function createStoreHook(context = ReactReduxContext) {
   const useReduxContext =
     context === ReactReduxContext
