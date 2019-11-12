@@ -1,8 +1,4 @@
 // Tips：生成随机字符串
-/**
- * @param {any} obj The object to inspect.
- * @returns {boolean} True if the argument appears to be a plain object.
- */
 const randomString = () =>
   Math.random()
     .toString(36)

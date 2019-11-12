@@ -1,13 +1,4 @@
-/**
- * Composes single-argument functions from right to left. The rightmost
- * function can take multiple arguments as it provides the signature for
- * the resulting composite function.
- *
- * @param {...Function} funcs The functions to compose.
- * @returns {Function} A function obtained by composing the argument functions
- * from right to left. For example, compose(f, g, h) is identical to doing
- * (...args) => f(g(h(...args))).
- */
+// TIPS：该方法主要是实现函数Curry化，并且通过reduce，将全部参数(function)从右到左执行，并且将执行后的return作为下一个的参数传入
 
 export default function compose(...funcs) {
   if (funcs.length === 0) {
@@ -18,6 +9,10 @@ export default function compose(...funcs) {
     return funcs[0]
   }
 
-  // Tips：函数Curry化，并且按参数从后往前执行，并将执行完的函数作为下一个的参数
+  /*
+    Tips：reduce就是数组叠加，主要将funcs处理好
+    假设a、b、c都为function
+    compose则会处理成arg => a(b(c(arg)))，这样一个function，compose(args)即可得到最终结果
+  */
   return funcs.reduce((a, b) => (...args) => a(b(...args)))
 }

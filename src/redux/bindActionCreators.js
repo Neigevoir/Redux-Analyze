@@ -6,33 +6,25 @@ function bindActionCreator(actionCreator, dispatch) {
 }
 
 /**
- * Turns an object whose values are action creators, into an object with the
- * same keys, but with every function wrapped into a `dispatch` call so they
- * may be invoked directly. This is just a convenience method, as you can call
- * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ * TIPS：主要用绑定action，可以减少dispatch，直接将this.props.dispatch(action)简化，用户可以直接通过变量使用
  *
- * For convenience, you can also pass an action creator as the first argument,
- * and get a dispatch wrapped function in return.
+ * @param {Function|Object} actionCreators
+ * 传入一个action或者一个action对象进行封装
  *
- * @param {Function|Object} actionCreators An object whose values are action
- * creator functions. One handy way to obtain it is to use ES6 `import * as`
- * syntax. You may also pass a single function.
+ * @param {Function} dispatch
+ * Redux里面的sipactch方法
  *
- * @param {Function} dispatch The `dispatch` function available on your Redux
- * store.
- *
- * @returns {Function|Object} The object mimicking the original object, but with
- * every action creator wrapped into the `dispatch` call. If you passed a
- * function as `actionCreators`, the return value will also be a single
- * function.
+ * @returns {Function|Object}
+ * return一个经过处理的action或者actions对象
  */
-// TIPS：主要用绑定action，可以减少dispatch，直接将this.props.dispatch(action)简化，用户可以直接通过变量使用
+
 export default function bindActionCreators(actionCreators, dispatch) {
   // TIPS：如果已经是一个function，那就直接返回简化的function
   if (typeof actionCreators === 'function') {
     return bindActionCreator(actionCreators, dispatch)
   }
 
+  // TIPS：如果actionCreators不是对象也不是function，需要抛出异常
   if (typeof actionCreators !== 'object' || actionCreators === null) {
     throw new Error(
       `bindActionCreators expected an object or a function, instead received ${
@@ -43,8 +35,7 @@ export default function bindActionCreators(actionCreators, dispatch) {
   }
 
   /* 
-    TIPS：如果是object，则进行遍历，对action里面的value为function的进行处理，
-    该场景极少见，目前大部分action都写出function形式，应该是actions的处理
+    TIPS：如果是object，则进行遍历，对action里面的value为function的进行处理，主要是做actions的处理
     {
       userAction: () => { type, data },
       homeAction: () => { type, data }

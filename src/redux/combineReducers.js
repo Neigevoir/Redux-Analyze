@@ -64,7 +64,7 @@ function getUnexpectedStateShapeWarningMessage(
   }
 }
 
-// TIPS：断言reducer的格式
+// TIPS：断言reducer的格式，initialState或者action的typs没有定义对应reducer时抛出错误
 function assertReducerShape(reducers) {
   Object.keys(reducers).forEach(key => {
     const reducer = reducers[key]
@@ -98,24 +98,13 @@ function assertReducerShape(reducers) {
 }
 
 /**
- * Turns an object whose values are different reducer functions, into a single
- * reducer function. It will call every child reducer, and gather their results
- * into a single state object, whose keys correspond to the keys of the passed
- * reducer functions.
- *
- * @param {Object} reducers An object whose values correspond to different
- * reducer functions that need to be combined into one. One handy way to obtain
- * it is to use ES6 `import * as reducers` syntax. The reducers may never return
- * undefined for any action. Instead, they should return their initial state
- * if the state passed to them was undefined, and the current state for any
- * unrecognized action.
+ * TIPS：结合Reducer，将Reducer整合成一个Reducer，更新并剔除和检查不正确格式的reducer
+ * @param {Object} reducers
+ * TIPS：传入一个reducers对象，将整个reducers
  *
  * @returns {Function} A reducer function that invokes every reducer inside the
- * passed object, and builds a state object with the same shape.
+ * Tips：返回一个function，用户执行dispatch时，通过type进行执行对应reducer方法
  */
-/* 
-  TIPS：结合Reducer，将Reducer整合成一个Reducer，原先的Reducer等于现在的子集
-*/
 
 export default function combineReducers(reducers) {
   const reducerKeys = Object.keys(reducers)
@@ -123,6 +112,7 @@ export default function combineReducers(reducers) {
   for (let i = 0; i < reducerKeys.length; i++) {
     const key = reducerKeys[i]
 
+    // TIPS：非生产环境下如果reducer没有定义，抛出警告
     if (process.env.NODE_ENV !== 'production') {
       if (typeof reducers[key] === 'undefined') {
         warning(`No reducer provided for key "${key}"`)
@@ -143,6 +133,7 @@ export default function combineReducers(reducers) {
     unexpectedKeyCache = {}
   }
 
+  // TIPS：存储Error
   let shapeAssertionError
   try {
     assertReducerShape(finalReducers)
@@ -155,6 +146,7 @@ export default function combineReducers(reducers) {
       throw shapeAssertionError
     }
 
+    // TIPS：非生产环境获得state格式不对
     if (process.env.NODE_ENV !== 'production') {
       const warningMessage = getUnexpectedStateShapeWarningMessage(
         state,
@@ -169,7 +161,7 @@ export default function combineReducers(reducers) {
 
     let hasChanged = false
     const nextState = {}
-    // TIPS：拿到整个Reducers，然后拿到对应的Key
+    // TIPS：拿到整个Reducers，然后拿到对应的Key，最后拿到key对应的reducer，然后传入state, action并执行reducer方法
     for (let i = 0; i < finalReducerKeys.length; i++) {
       const key = finalReducerKeys[i]
       const reducer = finalReducers[key]
