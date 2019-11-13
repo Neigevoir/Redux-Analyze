@@ -72,7 +72,7 @@ export default class Subscription {
   // TIPS：store收到dispatch会执行nextListeners订阅组，这里provider会将该函数注册到nextListeners中
   handleChangeWrapper() {
     if (this.onStateChange) {
-      this.onStateChange()
+      this.onStateChange('测试')
     }
   }
 
@@ -87,7 +87,6 @@ export default class Subscription {
       this.unsubscribe = this.parentSub
         ? this.parentSub.addNestedSub(this.handleChangeWrapper)
         : this.store.subscribe(this.handleChangeWrapper) //TIPS：给store的nextListeners增加一个订阅的方法
-
       this.listeners = createListenerCollection()
     }
   }
