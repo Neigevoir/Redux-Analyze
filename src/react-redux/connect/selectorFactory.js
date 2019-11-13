@@ -78,7 +78,15 @@ export function pureFinalPropsSelectorFactory(
     return mergedProps
   }
 
-  // Tips：流程4-对state和props的最新和当前进行相等判断，根据相对的进行return
+  /* 
+    Tips：流程4-对state和props的最新和当前进行相等判断，根据相对的进行return
+    分为三种情况：
+      1、props和state都change，handleNewPropsAndNewState
+      2、props是change，state不变，handleNewProps
+      3、state是change，props不变，handleNewState
+    handleSubsequentCalls其实可以和三个处理state和props的方法合并起来，都属于对state和props的处理
+    分离开只是结构上更清晰
+  */
   function handleSubsequentCalls(nextState, nextOwnProps) {
     const propsChanged = !areOwnPropsEqual(nextOwnProps, ownProps)
     const stateChanged = !areStatesEqual(nextState, state)
@@ -102,12 +110,12 @@ export function pureFinalPropsSelectorFactory(
   }
 }
 
-// TODO: Add more comments
-
-// If pure is true, the selector returned by selectorFactory will memoize its results,
-// allowing connectAdvanced's shouldComponentUpdate to return false if final
-// props have not changed. If false, the selector will always return a new
-// object and shouldComponentUpdate will always return true.
+/*
+  selectorFactory也即是finalPropsSelectorFactory，主要用来处理props
+  通过options的pure来决定使用的合并props的处理方式
+  pure的时候，可以直接拿结果，如果props没有改变，connectAdvanced shouldComponentUpdate可以返回false，不更新
+  非pure的时候，直接拿新的props对象，进行更新
+*/
 
 export default function finalPropsSelectorFactory(
   dispatch,

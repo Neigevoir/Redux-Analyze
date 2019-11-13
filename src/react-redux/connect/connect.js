@@ -5,24 +5,7 @@ import defaultMapStateToPropsFactories from './mapStateToProps'
 import defaultMergePropsFactories from './mergeProps'
 import defaultSelectorFactory from './selectorFactory'
 
-/*
-  connect is a facade over connectAdvanced. It turns its args into a compatible
-  selectorFactory, which has the signature:
-
-    (dispatch, options) => (nextState, nextOwnProps) => nextFinalProps
-  
-  connect passes its args to connectAdvanced as options, which will in turn pass them to
-  selectorFactory each time a Connect component instance is instantiated or hot reloaded.
-
-  selectorFactory returns a final props selector from its mapStateToProps,
-  mapStateToPropsFactories, mapDispatchToProps, mapDispatchToPropsFactories, mergeProps,
-  mergePropsFactories, and pure args.
-
-  The resulting final props selector is called by the Connect component instance whenever
-  it receives new props or store state.
- */
-
-//  TIPS：将参数全部放到工厂函数中执行，拿回返回值
+//  TIPS：将参数全部放到工厂函数中执行，拿回工厂函数的返回值
 function match(arg, factories, name) {
   for (let i = factories.length - 1; i >= 0; i--) {
     const result = factories[i](arg)
@@ -38,12 +21,19 @@ function match(arg, factories, name) {
   }
 }
 
+// TIPS：判断是否严格相等
 function strictEqual(a, b) {
   return a === b
 }
 
-// createConnect with default args builds the 'official' connect behavior. Calling it with
-// different options opens up some testing and extensibility scenarios
+/*
+  createConnect返回了一个connect，它本身主要用来将
+    mapStateToPropsFactories 
+    mapDispatchToPropsFactories
+    mergePropsFactories
+    selectorFactory
+  等工厂函数设置好
+ */
 export function createConnect({
   connectHOC = connectAdvanced,
   mapStateToPropsFactories = defaultMapStateToPropsFactories,
@@ -51,6 +41,15 @@ export function createConnect({
   mergePropsFactories = defaultMergePropsFactories,
   selectorFactory = defaultSelectorFactory
 } = {}) {
+  /*
+    connect主要是返回了connectHOC，一个HOC组件用来包裹用户的components
+    主要作用是接收用户传递下来的
+      mapStateToProps
+      mapDispatchToProps
+      mergeProps
+      options
+    并且将mapStateToProps、mapDispatchToProps、mergeProps通过工厂函数进行处理，传递给HOC
+  */
   return function connect(
     mapStateToProps,
     mapDispatchToProps,
@@ -82,17 +81,17 @@ export function createConnect({
     )
     const initMergeProps = match(mergeProps, mergePropsFactories, 'mergeProps')
 
+    /*
+      
+     */
     return connectHOC(selectorFactory, {
-      // used in error messages
-      methodName: 'connect',
+      methodName: 'connect', // 在error的时候会进行显示
 
-      // used to compute Connect's displayName from the wrapped component's displayName.
-      getDisplayName: name => `Connect(${name})`,
+      getDisplayName: name => `Connect(${name})`, // 获取组件的displayName.
 
-      // if mapStateToProps is falsy, the Connect component doesn't subscribe to store state changes
-      shouldHandleStateChanges: Boolean(mapStateToProps),
+      shouldHandleStateChanges: Boolean(mapStateToProps), // mapStateToProps为true，connect的组件会订阅state的改变
 
-      // passed through to selectorFactory
+      // 需要用到的一些props参数和equal的参数
       initMapStateToProps,
       initMapDispatchToProps,
       initMergeProps,
@@ -102,7 +101,7 @@ export function createConnect({
       areStatePropsEqual,
       areMergedPropsEqual,
 
-      // any extra options args can override defaults of connect or connectAdvanced
+      // 其他的用户设置参数设置
       ...extraOptions
     })
   }

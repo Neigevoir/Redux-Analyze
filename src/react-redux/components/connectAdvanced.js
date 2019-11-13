@@ -49,12 +49,7 @@ function storeStateUpdatesReducer(state, action) {
 // TIPS：惰性去初始化Reducer的state
 const initStateUpdates = () => [null, 0]
 
-// React currently throws a warning when using useLayoutEffect on the server.
-// To get around it, we can conditionally useEffect on the server (no-op) and
-// useLayoutEffect in the browser. We need useLayoutEffect because we want
-// `connect` to perform sync updates to a ref to save the latest props after
-// a render is actually committed to the DOM.
-// TIPS：判断使用Effect还是LayoutEffect
+// TIPS：判断使用Effect还是LayoutEffect，如果同构则使用useLayoutEffect
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' &&
   typeof window.document !== 'undefined' &&
@@ -62,7 +57,7 @@ const useIsomorphicLayoutEffect =
     ? useLayoutEffect
     : useEffect
 
-//  Tips：connectAdvanced就是返回一个function组件
+//  Tips：connectAdvanced就是返回一个function组件，wrapWithConnect，并且设置好参数信息和验证
 export default function connectAdvanced(
   /*
     selectorFactory is a func that is responsible for returning the selector function used to
@@ -142,6 +137,7 @@ export default function connectAdvanced(
 
   // Tips：包裹的组件，connect()(WrappedComponent: <Test />)，
   return function wrapWithConnect(WrappedComponent) {
+    // TIPS：如果非生产环境需要判断一下element类型
     if (process.env.NODE_ENV !== 'production') {
       invariant(
         isValidElementType(WrappedComponent),
@@ -284,8 +280,7 @@ export default function connectAdvanced(
         forceComponentUpdateDispatch
       ] = useReducer(storeStateUpdatesReducer, EMPTY_ARRAY, initStateUpdates)
 
-      // Propagate any mapState/mapDispatch errors upwards
-      // TIPS：判断更新结果
+      // TIPS：判断更新结果是否有error
       if (previousStateUpdateResult && previousStateUpdateResult.error) {
         throw previousStateUpdateResult.error
       }
@@ -468,8 +463,7 @@ export default function connectAdvanced(
       return renderedChild
     }
 
-    // If we're in "pure" mode, ensure our wrapper component only re-renders when incoming props have changed.
-    // TIPS：Connect的参数配置
+    // TIPS：Connect的参数配置，pure就加上memo
     const Connect = pure ? React.memo(ConnectFunction) : ConnectFunction
 
     Connect.WrappedComponent = WrappedComponent
