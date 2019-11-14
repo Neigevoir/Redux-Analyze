@@ -30,7 +30,7 @@ function SecondRender(props) {
   console.log('SecondRender')
   return <div onClick={handleClick}>Second</div>
 }
-const Second = connect()(SecondRender)
+const Second = connect(getPureState)(SecondRender)
 
 function FirstChildRender(props) {
   const test = useSelector(state => state.common.test)
