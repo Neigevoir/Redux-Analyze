@@ -1,11 +1,7 @@
 import { Provider, connect } from '../react-redux'
-import { useSelector } from '../react-redux'
+import { useSelector, useDispatch } from '../react-redux'
 import Store from 'src/app/store/store.js'
 import Actions from 'src/app/actions/actions'
-
-function getTestState(state) {
-  return { test: state.common.test }
-}
 
 function getPureState(state) {
   return { pure: state.common.pure }
@@ -32,20 +28,20 @@ function SecondRender(props) {
 }
 const Second = connect(getPureState)(SecondRender)
 
+// TIPS：推荐使用hooks的方式，去掉decorators的connect，对比SecondRender
 function FirstChildRender(props) {
   const test = useSelector(state => state.common.test)
+  const dispatch = useDispatch()
   function handleClick(e) {
     e.stopPropagation()
     e.preventDefault()
-    props.dispatch(Actions.common.TestRedux())
-    console.log(1)
+    dispatch(Actions.common.TestRedux())
   }
   console.log('FirstChildRender')
-  console.log(props)
   return <div onClick={handleClick}>FirstChild{test}</div>
 }
 
-const FirstChild = connect(getTestState)(FirstChildRender)
+const FirstChild = FirstChildRender
 
 function Test(props) {
   function consoleTest() {
