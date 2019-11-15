@@ -28,7 +28,7 @@ function SecondRender(props) {
 }
 const Second = connect(getPureState)(SecondRender)
 
-// TIPS：推荐使用hooks的方式，去掉decorators的connect，对比SecondRender
+// TIPS：推荐使用hooks的方式，去掉decorators的connect，对比SecondRender，并且不使用connect，在源码上应该对体积有大的改进，不需要用到connect和advance
 function FirstChildRender(props) {
   const test = useSelector(state => state.common.test)
   const dispatch = useDispatch()
