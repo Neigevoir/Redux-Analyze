@@ -3,9 +3,24 @@ import { useSelector, useDispatch } from '../react-redux'
 import Store from 'src/app/store/store.js'
 import Actions from 'src/app/actions/actions'
 
+function getState(state) {
+  return { test: state.common.test }
+}
+
 function getPureState(state) {
   return { pure: state.common.pure }
 }
+
+function SecondChildRender(props) {
+  function handleClick(e) {
+    e.stopPropagation()
+    e.preventDefault()
+    props.dispatch(Actions.common.TestRedux())
+  }
+  console.log('SecondChild')
+  return <div onClick={handleClick}>SecondChild</div>
+}
+const SecondChild = connect(getState)(SecondChildRender)
 
 function First(props) {
   console.log('First')
@@ -13,6 +28,7 @@ function First(props) {
     <div>
       First
       <FirstChild />
+      <SecondChild />
     </div>
   )
 }
@@ -27,6 +43,19 @@ function SecondRender(props) {
   return <div onClick={handleClick}>Second</div>
 }
 const Second = connect(getPureState)(SecondRender)
+
+function ThreeRender(props) {
+  const pure = useSelector(state => state.common.pure)
+  const dispatch = useDispatch()
+  function handleClick(e) {
+    e.stopPropagation()
+    e.preventDefault()
+    dispatch(Actions.common.TestRedux())
+  }
+  console.log('ThreeRender')
+  return <div onClick={handleClick}>ThreeRender{pure ? 'true' : 'false'}</div>
+}
+const Three = ThreeRender
 
 // TIPS：推荐使用hooks的方式，去掉decorators的connect，对比SecondRender，并且不使用connect，在源码上应该对体积有大的改进，不需要用到connect和advance
 function FirstChildRender(props) {
@@ -53,6 +82,7 @@ function Test(props) {
       <div onClick={consoleTest}>test</div>
       <First dispatch={props.dispatch} />
       <Second dispatch={props.dispatch} />
+      <Three />
     </div>
   )
 }

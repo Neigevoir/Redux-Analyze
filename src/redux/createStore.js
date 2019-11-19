@@ -170,6 +170,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 
     // TIPS：执行整个订阅的事件组
     const listeners = (currentListeners = nextListeners)
+    console.log(listeners)
     for (let i = 0; i < listeners.length; i++) {
       const listener = listeners[i]
       listener()
