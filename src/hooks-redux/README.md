@@ -32,26 +32,24 @@ Hooks的React Redux对比以前用Connect简单不少，重点只要看Provider�
   Store：指Redux生成的Store，里面包含dispatch、subscribe等
   store：指在一个应用中的状态树
 
-                                          Store(Redux生成的Store)                                            
-                                            
-                                             ｜ 如有dispatch会触发Store的订阅执行
             
-  Context(生成全局Store的Context) ————————— Provider【传递Store和生成Store的订阅(Subscription)】
-
-    ｜
-    ｜ 获取Context的Value
-    ｜
-                获取contextValue的store和Subscription
-useReduxContext   ——————————————————————  useSelector(绑定update的方法到Subscription)
-
-    ｜ 获取contextValue的store                ｜ 绑定useSelector，update则刷新components
-                                                             
-useStore                                  components(四个Hooks函数都可以使用)
-                                          
-    ｜ 获取store的dispatch                    ｜ 
-                                           
-useDispatch   ————————————————————————————————>  components 调用dispatch触发Store本身的订阅组执行
-
+    Context  ——————————————————————————————— Provider【传递Store和生成ProviderStore的订阅(Subscription)】
+(生成用作全局Store的Context)
+                                              ｜  ProviderStore订阅的执行，触发组件加入到
+                                              ｜  ProviderStore的subcription的执行(即Uptdae方法)
+      ｜                                                                                      |                      
+                      (生成组件的subcription，绑定组件update                                        
+                        到ProviderStore的Subscription)      绑定组件                                     
+  useReduxContext  ———————————— useSelector  —————————————————————————————— components        |  ReduxStore的订阅的执行触发
+(获取contextValue)                                  Update则刷新components  (四个Hooks函数皆可用)    ProviderStore订阅的执行
+      ｜                                                                                 
+                                                                  ｜                     
+    useStore                                                      ｜ 调用dispatch              |     
+(获取contextValue的store)                                          ｜
+      ｜                                                                                         
+                                                 触发ReduxStore本身的订阅组执行
+  useDispatch   ————————————————————————————————————————————————————————————————————————>  Store(Redux生成的Store)       
+(获取store的dispatch)
 
 /**
  * @example
