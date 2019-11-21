@@ -54,6 +54,7 @@ Hooks的React Redux对比以前用Connect简单不少，重点只要看Provider�
 ```
 
 ```javascript
+@example
 import React, { useCallback } from 'react'
 import { useDispatch, useReduxContext, useSelector } from 'react-redux'
 export const CounterComponent = ({ value }) => {
