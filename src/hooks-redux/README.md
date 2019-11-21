@@ -53,25 +53,22 @@ Hooks的React Redux对比以前用Connect简单不少，重点只要看Provider�
 (获取store的dispatch)
 ```
 
-/**
- * @example
- *
- * import React, { useCallback } from 'react'
- * import { useDispatch, useReduxContext, useSelector } from 'react-redux'
- *
- * export const CounterComponent = ({ value }) => {
- *   const dispatch = useDispatch()
- *   const { store } = useReduxContext()
- *   const storeSate = useStore()
- *   const counter = useSelector(state => state.counter)
- *   const increaseCounter = useCallback(() => dispatch({ type: 'increase-counter' }), [])
- *   return (
- *     <div>
- *       <span>{value}</span>
- *       <div>{store.getState()}</div>
- *       <div>{storeSate.getState()}</div>
- *       <button onClick={increaseCounter}>Increase {counter}</button>
- *     </div>
- *   )
- * }
- */
+```javascript
+import React, { useCallback } from 'react'
+import { useDispatch, useReduxContext, useSelector } from 'react-redux'
+export const CounterComponent = ({ value }) => {
+  const dispatch = useDispatch()
+  const { store } = useReduxContext()
+  const storeSate = useStore()
+  const counter = useSelector(state => state.counter)
+  const increaseCounter = useCallback(() => dispatch({ type: 'increase-counter' }), [])
+  return (
+    <div>
+      <span>{value}</span>
+      <div>{store.getState()}</div>
+      <div>{storeSate.getState()}</div>
+      <button onClick={increaseCounter}>Increase {counter}</button>
+    </div>
+  )
+}
+```
